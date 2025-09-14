@@ -1,16 +1,14 @@
-// app/(tabs)/_layout.tsx
-
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthOfProvider } from "../../hooks/AuthContext";
+import "../../global.css"
 
-// Definimos una interfaz para la estructura de nuestras pantallas
 interface TabScreen {
 	name: string;
 	title: string;
 	icon: keyof typeof Ionicons.glyphMap;
-	roles: string[]; // Roles que pueden ver esta pestaña
+	roles: string[];
 }
 
 export default function Layout() {

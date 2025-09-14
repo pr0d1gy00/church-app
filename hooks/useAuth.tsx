@@ -33,12 +33,12 @@ export default function useAuth() {
 		};
 		try {
 			const response = await axios.post(
-				"http://192.168.110.232:4000/church/auth/login",
+				`${process.env.EXPO_PUBLIC_API_URL}/church/auth/login`,
 				{
 					...userData,
 				}
 			);
-			if (response.status === 200) {
+			if (response.status >= 200 && response.status < 300) {
 				Alert.alert("Usuario autenticado con éxito");
 				login(response.data.user);
 				setUser({

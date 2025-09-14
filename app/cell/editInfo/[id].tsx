@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useCell from "../../../hooks/useCell";
 import {
+	KeyboardAvoidingView,
 	ScrollView,
 	Text,
 	TextInput,
@@ -37,6 +38,10 @@ export default function EditCellInfo() {
 	}, [cellByIdData]);
 
 	return (
+				<KeyboardAvoidingView
+					style={{ flex: 1 }}
+					behavior="padding"
+				>
 		<ScrollView
 			style={{ flex: 1, width: "100%" }}
 			contentContainerStyle={{
@@ -82,7 +87,7 @@ export default function EditCellInfo() {
 								handleChange("leaderId", val)
 							}
 						>
-							<Picker.Item label="Sin líder" value="" />	
+							<Picker.Item label="Sin líder" value="" />
 							{allUsers?.users.map((user) => (
 								<Picker.Item
 									key={user.id}
@@ -178,5 +183,6 @@ export default function EditCellInfo() {
 				</Text>
 			</TouchableOpacity>
 		</ScrollView>
+		</KeyboardAvoidingView>
 	);
 }

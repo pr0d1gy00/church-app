@@ -29,7 +29,7 @@ export default function users() {
 	return (
 		<View className="flex-1 bg-white flex items-center w-full">
 			<Search placeholder="Buscar usuario..." />
-			<View className="flex-1 w-full px-4">
+			<View className="flex-1 w-full px-4  ">
 				<View className="px-4 mt-2">
 					<Text className="text-3xl font-bold text-gray-800">
 						Usuarios Registrados

@@ -13,7 +13,7 @@ export default function useGetAllUser() {
 		setLoading(true);
 		try {
 			const response = await axios.get(
-				"http://192.168.110.232:4000/church/users/getAllUsers"
+				`${process.env.EXPO_PUBLIC_API_URL}/church/users/getAllUsers`
 			);
 			setAllUsers(response.data);
 		} catch (error) {

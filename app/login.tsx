@@ -6,6 +6,7 @@ import {
 	Image,
 	TouchableOpacity,
 	ScrollView,
+	KeyboardAvoidingView,
 } from "react-native";
 
 import { Link } from "expo-router";
@@ -15,6 +16,10 @@ const imageLogin = require("../assets/LogoJuvenilAsset 24.png");
 export default function Login() {
 	const { user, handleChange, handleSubmit } = useAuth();
 	return (
+				<KeyboardAvoidingView
+					style={{ flex: 1 }}
+					behavior="padding"
+				>
 		<ScrollView
 			className="w-full h-full"
 			contentContainerStyle={{
@@ -22,15 +27,20 @@ export default function Login() {
 				justifyContent: "center",
 				alignItems: "center",
 			}}
-			style={{ backgroundColor: 'white' }}
+			style={{ backgroundColor: "white" }}
 		>
+			<View className="items-center pt-24 flex-col w-full h-full ">
+				<View className="w-32 h-32 mb-6">
+					<Image
+						source={imageLogin}
+						className="w-32 h-32 mb-6 object-contain"
+						resizeMode="contain"
+						width={128}
+						height={128}
+						style={{ width: 128, height: 128, resizeMode: "contain" }}
 
-				<View className="items-center pt-24 flex-col w-full h-full ">
-				<Image
-					source={imageLogin}
-					className="w-48 h-48 mb-6 object-contain"
-					resizeMode="contain"
-				/>
+/>
+				</View>
 				<Text className="text-5xl text-[#73937e] font-bold">
 					Iniciar Sesión
 				</Text>
@@ -84,7 +94,10 @@ export default function Login() {
 					<View className="w-36 border border-[#f2f2f2] "></View>
 				</View>
 				<View className="w-[78%] flex-row justify-between items-center mt-2">
-					<Link href="/registercell" className="text-[#73937e] text-xl mt-4">
+					<Link
+						href="/registercell"
+						className="text-[#73937e] text-xl mt-4"
+					>
 						Cambiar contraseña{" "}
 					</Link>
 					<Link
@@ -94,8 +107,8 @@ export default function Login() {
 						Registrarse
 					</Link>
 				</View>
-
-					</View>
+			</View>
 		</ScrollView>
+			</KeyboardAvoidingView>
 	);
 }

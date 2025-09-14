@@ -35,3 +35,5 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+church-6a68a-firebase-adminsdk-fbsvc-3cd3b5d2ef.json

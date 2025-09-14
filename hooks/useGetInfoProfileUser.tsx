@@ -15,7 +15,7 @@ export default function useGetInfoProfileUser() {
 	const fetchUserById = async () => {
 		setLoading(true);
 		try {
-			const response = await axios.get(`http://192.168.110.232:4000/church/users/getUserbyId`,{
+			const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/church/users/getUserbyId`,{
 				//params: { id }
 			});
 			setDataUserRegister({

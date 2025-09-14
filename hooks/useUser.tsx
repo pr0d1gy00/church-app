@@ -3,6 +3,7 @@ import { Alert, Platform } from "react-native";
 import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
 import useGetAllUser from "./useGetAllUser";
+import { registerForPushNotificationsAsync } from "./useNotification";
 
 interface DataUserRegister {
 	name: string;
@@ -40,7 +41,7 @@ export default function useUser() {
 		setLoading(true);
 		try {
 			const response = await axios.get(
-				`http://192.168.110.232:4000/church/users/getUserbyId`,
+				`${process.env.EXPO_PUBLIC_API_URL}/church/users/getUserbyId`,
 				{
 					params: { id },
 				}
@@ -82,8 +83,7 @@ export default function useUser() {
 	const fetchRemoveLeadership = async (userId: number) => {
 		try
 		{
-			console.log(userId)
-			const response = await axios.put('http://192.168.110.232:4000/church/users/removeLeaderFromCells',{},{
+			const response = await axios.put(`${process.env.EXPO_PUBLIC_API_URL}/church/users/removeLeaderFromCells`,{},{
 				params: {
 					userId
 				}
@@ -100,7 +100,7 @@ export default function useUser() {
 	};
 	const handleSubmit = async () => {
 		setLoading(true);
-
+		const token = await registerForPushNotificationsAsync();
 		if (!id) {
 			if (
 				!dataUserRegister.name ||
@@ -130,7 +130,7 @@ export default function useUser() {
 				role: "MEMBER",
 			};
 			const device = {
-				deviceToken: "jhdjhdklasjkdhaskjldhjklasq12313",
+				deviceToken: token,
 				platform: Platform.OS,
 			};
 			const userData = {
@@ -139,7 +139,7 @@ export default function useUser() {
 			};
 			try {
 				const response = await axios.post(
-					"http://192.168.110.232:4000/church/users/createUser",
+					`${process.env.EXPO_PUBLIC_API_URL}/church/users/createUser`,
 					userData
 				);
 				if (response.status >= 200 && response.status < 300) {
@@ -161,6 +161,8 @@ export default function useUser() {
 				setLoading(false);
 			}
 		} else {
+			const token = await registerForPushNotificationsAsync();
+
 			if (!dataUserRegister.name || !dataUserRegister.email) {
 				Alert.alert("Por favor, completa todos los campos");
 				setLoading(false);
@@ -193,7 +195,7 @@ export default function useUser() {
 				role: dataUserRegister.role,
 			};
 			const device = {
-				deviceToken: "jhdjhdklasjkdhaskjldhjklasq12313",
+				deviceToken: token,
 				platform: Platform.OS,
 			};
 			const userData = {
@@ -202,14 +204,14 @@ export default function useUser() {
 			};
 			try {
 				const response = await axios.put(
-					"http://192.168.110.232:4000/church/users/updateUserbyId",
+					`${process.env.EXPO_PUBLIC_API_URL}/church/users/updateUserbyId`,
 					userData,
 					{
 						params: { id },
 					}
 				);
 				if (response.status >= 200 && response.status < 300) {
-					Alert.alert("Usuario registrado con éxito");
+					Alert.alert("Usuario actualizado con éxito");
 					setDataUserRegister({
 						name: "",
 						email: "",
@@ -221,7 +223,7 @@ export default function useUser() {
 			} catch (error) {
 				Alert.alert(
 					"Error",
-					"No se pudo registrar el usuario"
+					"No se pudo actualizar el usuario"
 				);
 			} finally {
 				setLoading(false);

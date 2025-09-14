@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "186911403948",
+    "project_id": "church-6a68a",
+    "storage_bucket": "church-6a68a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186911403948:android:9b2fa6a3fc47d8a9d21409",
+        "android_client_info": {
+          "package_name": "com.prodigy03.church"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjEwyxjjppw7Lm1-HGSEokjqPP2n6ZFnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

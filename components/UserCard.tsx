@@ -26,11 +26,11 @@ export default function UserCard({
 	return (
 		<TouchableOpacity
 			onPress={() => router.push(`editProfile/${user.id}`)}
-			className="bg-[#ebebeb5e] p-4 rounded-xl shadow-sm mb-4 mx-4"
+			className="p-4 rounded-xl shadow-sm mb-4"
 		>
 			{/* ... (Sección superior del usuario sin cambios) ... */}
 			<View className="flex-row items-center">
-				<View className="w-12 h-12 rounded-full bg-gray-200 justify-center items-center">
+				<View className="w-12 h-12 rounded-full justify-center items-center">
 					<Ionicons name="person" size={24} color="#73937e" />
 				</View>
 				<View className="flex-1 ml-4">
@@ -60,7 +60,6 @@ export default function UserCard({
 						<TouchableOpacity
 							onPress={(e) => {
 								e.stopPropagation();
-                                console.log(user.id)
 								onRemoveLeadership(user.id);
 							}}
 							className="mt-2 flex-row items-center bg-yellow-100 px-2 py-1 rounded-md active:opacity-70"

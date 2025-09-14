@@ -3,6 +3,7 @@ import Checkbox from 'expo-checkbox'
 import React from 'react'
 import { FlatList, Pressable, Text, View } from 'react-native'
 import useEvent from '../../../hooks/useEvent';
+import { Event } from '../../../interfaces/event.interfaces';
 
 export default function AddedMemberToEvent() {
 	const { allUsers,allEvents, id,selectedEventToSend,setSelectedEventToSend, eventDataById,selectedUsers, handleValueChange,handleSubmitAddMemberToEvent,
@@ -12,11 +13,11 @@ export default function AddedMemberToEvent() {
 		<View className="w-full items-center flex-1 px-2 bg-white">
 				<View className="w-[90%] py-4">
 					<Text className="text-4xl text-center font-bold text-[#73937e]">
-						Agregar Miembros a la Célula
+						Agregar Miembros al Evento
 					</Text>
 					<View className="py-4">
 						<Text className="font-semibold py-2 text-lg text-[#73937e]">
-							Célula:
+							Evento:
 						</Text>
 						<View className="bg-[#f2f2f2]  rounded-lg">
 							<Picker

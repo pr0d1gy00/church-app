@@ -37,7 +37,7 @@ export default function EventsScreen() {
                     {
                         label: "Agregar Miembros",
                         icon: "person-add-outline",
-                        urlToNavigate: "/addedMemberToCell"
+                        urlToNavigate: "/addedMemberToEvent"
                     }
                 ]}
                 handleMenuOption={handleMenuOption}

@@ -18,7 +18,7 @@ import { showConfirmationAlert } from "../helpers/alert";
 export default function useEvent() {
 	const { user } = useAuthOfProvider();
 	const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
-
+	const [eventDataByUserId, setEventDataByUserId] = useState<EventsApiResponse | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [eventDataById, setEventDataById] =
 		useState<EventByIdApiResponse | null>(null);
@@ -52,27 +52,62 @@ export default function useEvent() {
 	const fetchAllEvents = async () => {
 		try {
 			const response = await axios.get(
-				"http://192.168.110.232:4000/church/events"
+				`${process.env.EXPO_PUBLIC_API_URL}/church/events`
 			);
 			setAllEvents(response.data);
 		} catch (error) {
-			console.error(error);
+			Alert.alert("Error", "No se pudieron cargar los eventos. Estamos resolviéndolo.");
 		}
 	};
-	const confirmAndDeleteCell = (id: number) => {
+	const confirmAndDeleteUserOfEvent = (id: number) => {
 		showConfirmationAlert({
 			title: "Confirmar eliminación",
 			message:
-				"¿Estás seguro de que deseas eliminar esta célula?",
+				"¿Estás seguro de que deseas eliminar este usuario del evento?",
 			onConfirm: () => {
 				handleDeleteUserOfEvent(id);
 			},
 		});
 	};
+	const confirmDeleteEvent = (id:number) => {
+		showConfirmationAlert({
+			title: "Confirmar eliminación",
+			message: "¿Estás seguro de que deseas eliminar este evento?",
+			onConfirm: () => {
+				handleDeleteEvent(id);
+			},
+		});
+	};
+	const handleDeleteEvent = async (id:number) => {
+		try {
+			const response = await axios.delete(
+				`${process.env.EXPO_PUBLIC_API_URL}/church/events/deleteEvent`,
+				{
+					params: {
+						eventId: id,
+						userId: user!.id
+					},
+				}
+			);
+			if (response.status === 200) {
+				Alert.alert(
+					response.data.message ||
+						"Evento eliminado con éxito"
+				);
+				router.back();
+			}
+		} catch (error) {
+			if (isAxiosError(error))
+				Alert.alert(
+					error.response?.data?.message || "Error",
+					"No se pudo eliminar el evento"
+				);
+		}
+	};
 	const handleDeleteUserOfEvent = async (idUser: number) => {
 		try {
 			const response = await axios.post(
-				"http://192.168.110.232:4000/church/events/removeUserOfEventToNotify",{},
+				`${process.env.EXPO_PUBLIC_API_URL}/church/events/removeUserOfEventToNotify`,{},
 				{
 					params: {
 						eventId: id,
@@ -95,6 +130,22 @@ export default function useEvent() {
 				);
 		}
 	};
+	const fetchEventByUserId = async (id: string) => {
+		setLoading(true);
+		try {
+			const response = await axios.get(
+				`${process.env.EXPO_PUBLIC_API_URL}/church/events/getEventByUserSubscription`,
+				{
+					params: { userId: id },
+				}
+			);
+			setEventDataByUserId(response.data);
+		} catch (error) {
+			Alert.alert("Error", "No se pudo obtener la información del evento.Estamos resolviéndolo.");
+		}finally{
+			setLoading(false);
+		}
+	};
 	const handleSubmit = async () => {
 		if (!eventData.title || !eventData.eventDate) {
 			Alert.alert(
@@ -106,14 +157,13 @@ export default function useEvent() {
 
 		setLoading(true);
 		try {
-			console.log("hola");
 			const dataToSend: EventData = {
 				...eventData,
 				createdBy: user!.id,
 			};
 
 			const response = await axios.post(
-				"http://192.168.110.232:4000/church/events/createEvent",
+				`${process.env.EXPO_PUBLIC_API_URL}/church/events/createEvent`,
 				dataToSend
 			);
 
@@ -122,7 +172,6 @@ export default function useEvent() {
 				router.back();
 			}
 		} catch (error) {
-			console.error(error);
 			if (isAxiosError(error)) {
 				Alert.alert(
 					error.response?.data?.message || "Error",
@@ -138,7 +187,7 @@ export default function useEvent() {
 	const handleGetUsers = async () => {
 		try {
 			const response = await axios.get(
-				"http://192.168.110.232:4000/church/users/getAllUsers"
+				`${process.env.EXPO_PUBLIC_API_URL}/church/users/getAllUsers`
 			);
 			setAllUsers(response.data);
 		} catch (error) {
@@ -162,18 +211,18 @@ export default function useEvent() {
 			}
 		});
 	};
+
 	const fetchEventById = async (id: string) => {
 		try {
 			const response = await axios.get(
-				`http://192.168.110.232:4000/church/events/getEventById`,
+				`${process.env.EXPO_PUBLIC_API_URL}/church/events/getEventById`,
 				{
-					params: { id },
+					params: { id: id ? id : selectedEventToSend },
 				}
 			);
-			console.log(response.data);
 			setEventDataById(response.data);
 		} catch (error) {
-			console.error(error);
+			Alert.alert("Error", "No se pudo obtener la información del evento.Estamos resolviéndolo.");
 		}
 	};
 	const handleSubmitAddMemberToEvent = async () => {
@@ -185,7 +234,7 @@ export default function useEvent() {
 		}
 		try {
 			const response = await axios.post(
-				`http://192.168.110.232:4000/church/events/addUserToEvent`,
+				`${process.env.EXPO_PUBLIC_API_URL}/church/events/addUserToEvent`,
 				{
 					userId: selectedUsers,
 				},
@@ -214,17 +263,25 @@ export default function useEvent() {
 	};
 	useFocusEffect(
 		useCallback(() => {
-			if (id) {
+			if (id || selectedEventToSend) {
 				fetchEventById(id as string);
 				handleGetUsers();
 			}
-		}, [id])
+		}, [id,selectedEventToSend])
 	);
 
 	useFocusEffect(
 		useCallback(() => {
 			fetchAllEvents();
+			handleGetUsers();
 		}, [])
+	);
+	useFocusEffect(
+		useCallback(() => {
+			if (user) {
+				fetchEventByUserId(user.id.toString());
+			}
+		}, [user])
 	);
 	return {
 		eventData,
@@ -241,6 +298,8 @@ export default function useEvent() {
 		setSelectedUsers,
 		handleValueChange,
 		handleSubmitAddMemberToEvent,
-		confirmAndDeleteCell
+		confirmAndDeleteUserOfEvent,
+		eventDataByUserId,
+		confirmDeleteEvent
 	};
 }

@@ -68,7 +68,7 @@ export default function useCell() {
 	};
 	const handleGetCellById = async (id:number) => {
 		try {
-			const response = await axios.get(`http://192.168.110.232:4000/church/cells/getCellById`,{
+			const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/church/cells/getCellById`,{
 				params:{
 					id
 				}
@@ -91,7 +91,7 @@ export default function useCell() {
 			return;
 		}			try {
 			const response = await axios.post(
-				`http://192.168.110.232:4000/church/cells/addUserToCell`,
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/addUserToCell`,
 				{
 					userId: selectedUsers
 				},
@@ -118,7 +118,7 @@ export default function useCell() {
 	const handleGetUsers = async () => {
 		try {
 			const response = await axios.get(
-				"http://192.168.110.232:4000/church/users/getAllUsers"
+				`${process.env.EXPO_PUBLIC_API_URL}/church/users/getAllUsers`
 			);
 			setAllUsers(response.data);
 		} catch (error) {
@@ -158,7 +158,7 @@ export default function useCell() {
 		if( !id ){
 		try {
 			const response = await axios.post(
-				"http://192.168.110.232:4000/church/cells/createCell",
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/createCell`,
 				{
 					...cellData,
 				}
@@ -184,7 +184,7 @@ export default function useCell() {
 		}}else{
 			try {
 			const response = await axios.put(
-				"http://192.168.110.232:4000/church/cells/updateCell",
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/updateCell`,
 				{
 					...cellData,
 				},{
@@ -219,7 +219,7 @@ export default function useCell() {
 	const handleDeleteCell = async (id:number) => {
 		try {
 			const response = await axios.delete(
-				"http://192.168.110.232:4000/church/cells/deleteCell",
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/deleteCell`,
 				{
 					params: {
 						id
@@ -243,7 +243,7 @@ export default function useCell() {
 	const handleDeleteUserFromCell = async (idUser:number) => {
 		try {
 			const response = await axios.delete(
-				"http://192.168.110.232:4000/church/cells/removeUserFromCell",
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/removeUserFromCell`,
 				{
 					params: {
 						cellId:id,
@@ -267,7 +267,7 @@ export default function useCell() {
 	const handleGetCells = async () => {
 		try {
 			const response = await axios.get(
-				"http://192.168.110.232:4000/church/cells/getAllCells"
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/getAllCells`
 			);
 			setAllCells(response.data);
 		} catch (error) {
