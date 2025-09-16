@@ -23,13 +23,14 @@ export default function useCell() {
 	const [allUsers, setAllUsers] = useState<UsersApiResponse | null>(
 		null
 	);
+	const [stateToShow, setStateToShow] = useState<"active" | "inactive">("active");
 	const {user} = useAuthOfProvider()
 	const [selectedCellToSend, setSelectedCellToSend] = useState<
 		number | null
 	>(allCells?.cells[0]?.id || null);
 	const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
 
-	const confirmAndDelete= (id:number)=>{
+	const confirmAndDeleteUserFromCell = (id:number)=>{
 		showConfirmationAlert({
 			title: "Confirmar eliminación",
 			message: "¿Estás seguro de que deseas eliminar esta célula?",
@@ -43,6 +44,16 @@ export default function useCell() {
 			title: "Confirmar eliminación",
 			message: "¿Estás seguro de que deseas eliminar esta célula?",
 			onConfirm: ()=>{handleDeleteCell(	id)
+		}}
+		)
+			}
+				const confirmAndActivateCell= (id:number)=>{
+		showConfirmationAlert({
+			title: "Confirmar Activación",
+			isDelete: false,
+			message: "¿Estás seguro de que deseas activar esta célula?",
+			onConfirm: ()=>{handleActivateCell(	id)
+
 		}}
 		)
 			}
@@ -239,6 +250,30 @@ export default function useCell() {
 				);
 		}
 	};
+		const handleActivateCell = async (id:number) => {
+		try {
+			console.log(id)
+			const response = await axios.put(
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/activateCell`,{},
+				{
+					params: {
+						id
+					}
+				}
+			);
+			if (response.status === 200) {
+				Alert.alert(response.data.message || "Célula activada con éxito");
+				handleGetCells();
+				router.back();
+			}
+		} catch (error) {
+			if (isAxiosError(error))
+				Alert.alert(
+					error.response?.data?.message || "Error",
+					"No se pudo activada la célula"
+				);
+		}
+	};
 
 	const handleDeleteUserFromCell = async (idUser:number) => {
 		try {
@@ -278,6 +313,20 @@ export default function useCell() {
 				);
 		}
 	};
+	const handleGetCellsDeleted = async () => {
+		try {
+			const response = await axios.get(
+				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/getCellsDeleted`
+			);
+			setAllCells(response.data);
+		} catch (error) {
+			if (isAxiosError(error))
+				Alert.alert(
+					error.response?.data?.message || "Error",
+					"No se pudo obtener las células"
+				);
+		}
+	};
 	useFocusEffect(
 		useCallback(() => {
 		handleGetUsers();
@@ -286,13 +335,16 @@ export default function useCell() {
 
 	useFocusEffect(
 		useCallback(() => {
-		handleGetCells();
-		}, [])
+		if(stateToShow === "active"){
+			handleGetCells();
+		}else{
+			handleGetCellsDeleted();
+		}
+	}, [stateToShow])
 	);
 
 	useFocusEffect(
 		useCallback(() => {
-
 		if(id){
 			handleGetCellById(Number(id));
 		}
@@ -311,9 +363,11 @@ export default function useCell() {
 		handeSubmitaddMemberToCell,
 		cellByIdData,
 		setCell,
-		confirmAndDelete,
+		confirmAndDeleteUserFromCell,
 		confirmAndDeleteCell,
 		id,
-
+		confirmAndActivateCell,
+		stateToShow,
+		setStateToShow
 	};
 }

@@ -10,6 +10,7 @@ import {
 	ActivityIndicator,
 	StyleSheet,
 	Platform,
+	Pressable,
 } from "react-native";
 import useUser from "../../hooks/useUser";
 import { useAuthOfProvider } from "../../hooks/AuthContext";
@@ -20,11 +21,11 @@ const imageLogin = require("../../assets/LogoJuvenilAsset 24.png");
 const roles = ["MEMBER", "LEADER", "ADMIN"];
 
 export default function editProfile() {
-	const { dataUserRegister, handleChange, handleSubmit, loading } = useUser();
+	const { dataUserRegister, handleChange, handleSubmit, loading, confirmDeleteUser,confirmActivateUser } = useUser();
 	const { user } = useAuthOfProvider();
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+	console.log(user)
 	if (loading) {
 		return (
 			<ActivityIndicator
@@ -51,8 +52,39 @@ export default function editProfile() {
 						resizeMode="contain"
 					/>
 				</View>
-				<Text style={styles.title}>Editar Datos</Text>
-				<Text style={styles.subtitle}>Por favor ingresa tus datos</Text>
+				<View className="flex flex-row w-full justify-between px-6">
+					<View>
+						<Text style={styles.title}>Editar Datos</Text>
+						<Text style={styles.subtitle}>Por favor ingresa tus datos</Text>
+					</View>
+					{dataUserRegister?.deletedAt === null ? (
+					<Pressable
+						className="bg-red-500 justify-center h-16 w-24 rounded-lg items-center p-2"
+						onPress={() => confirmDeleteUser()}
+					>
+						<Ionicons
+							name="trash-outline"
+							size={28}
+							color="#ffffff"
+						/>
+
+
+					</Pressable>
+					): (
+<Pressable
+						className="bg-green-500 justify-center h-16 w-24 rounded-lg items-center p-2"
+						onPress={() => confirmActivateUser()}
+					>
+						<Ionicons
+							name="checkmark-outline"
+							size={28}
+							color="#ffffff"
+						/>
+
+
+					</Pressable>
+						)}
+				</View>
 				<View style={styles.formContainer}>
 					<View style={styles.inputGroup}>
 						<Text style={styles.label}>Nombre Completo</Text>
@@ -192,12 +224,14 @@ export default function editProfile() {
 						</>
 					)}
 				</View>
+				{user?.deletedAt === null && (
 				<TouchableOpacity
 					style={styles.button}
 					onPress={() => handleSubmit()}
 				>
 					<Text style={styles.buttonText}>Actualizar</Text>
 				</TouchableOpacity>
+				)}
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);
@@ -231,13 +265,11 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		color: "#73937e",
 		marginBottom: 8,
-		textAlign: "center",
 	},
 	subtitle: {
 		fontSize: 16,
 		color: "#6b7280",
 		marginBottom: 24,
-		textAlign: "center",
 	},
 	formContainer: {
 		width: "90%",

@@ -40,7 +40,8 @@ const DetailRow = ({
 );
 
 export default function CellById() {
-	const { cellByIdData, confirmAndDelete,confirmAndDeleteCell } = useCell();
+	const { cellByIdData, confirmAndDeleteUserFromCell, confirmAndDeleteCell, confirmAndActivateCell} =
+		useCell();
 
 	if (!cellByIdData) {
 		return <Loading visible={true} />;
@@ -62,7 +63,9 @@ export default function CellById() {
 						Nombre: {cell.name.slice(0, 20)}...
 					</Text>
 				</View>
-				<Pressable className="bg-[#0b1c0c] p-4 rounded-lg "
+				{cell.deletedAt === null && (
+				<Pressable
+					className="bg-[#0b1c0c] p-4 rounded-lg "
 					onPress={() => {
 						router.push(`/cell/editInfo/${cell.id}`);
 					}}
@@ -73,6 +76,7 @@ export default function CellById() {
 						color="#fff"
 					/>
 				</Pressable>
+				)}
 			</View>
 
 			{/* Tarjeta de Detalles Principales */}
@@ -104,24 +108,39 @@ export default function CellById() {
 				/>
 			</View>
 			<View className="w-full flex items-center">
-			<Pressable
-				className="bg-red-400 w-[90%] mx-auto rounded-lg h-12 mt-6 justify-center items-center"
-				onPress={() => {
-					confirmAndDeleteCell(cellByIdData.cell.id);
-				}}
-			>
-				<Text className="text-white text-lg font-bold">
-					Eliminar Célula
-				</Text>
-			</Pressable>
+				{cellByIdData.cell.deletedAt === null ? (
+					<Pressable
+						className="bg-red-400 w-[90%] mx-auto rounded-lg h-12 mt-6 justify-center items-center"
+						onPress={() => {
+							confirmAndDeleteCell(
+								cellByIdData.cell.id
+							);
+						}}
+					>
+						<Text className="text-white text-lg font-bold">
+							Eliminar Célula
+						</Text>
+					</Pressable>
+				) : (
+					<Pressable
+						className="bg-green-500 w-[90%] mx-auto rounded-lg h-12 mt-6 justify-center items-center"
+						onPress={() => {
+							confirmAndActivateCell(
+								cellByIdData.cell.id
+							);
+						}}
+					>
+						<Text className="text-white text-lg font-bold">
+							Activar Célula
+						</Text>
+					</Pressable>
+				)}
 			</View>
-
-
 
 			{/* Sección de Miembros */}
 			<FlatList
 				className="mx-4 mt-8"
-				data={cell.members}
+				data={cell?.members}
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={({ item: member }) => (
 					<View
@@ -129,20 +148,21 @@ export default function CellById() {
 						className="flex-row items-center bg-gray-50 p-3 rounded-lg mb-3 border border-gray-200"
 					>
 						<View className="flex items-center flex-row flex-1">
-						<Ionicons
-							name="person-outline"
-							size={24}
-							color="#0b1c0c"
-						/>
-						<Text className="ml-3 text-lg text-gray-800">
-							{member.user.name}
-						</Text>
+							<Ionicons
+								name="person-outline"
+								size={24}
+								color="#0b1c0c"
+							/>
+							<Text className="ml-3 text-lg text-gray-800">
+								{member.user.name}
+							</Text>
 						</View>
-						<Pressable className="bg-red-400 p-3 rounded-lg ml-auto"
+						{cellByIdData.cell.deletedAt === null && (
+						<Pressable
+							className="bg-red-400 p-3 rounded-lg ml-auto"
 							onPress={() => {
-								confirmAndDelete(member.userId);
+								confirmAndDeleteUserFromCell(member.userId);
 							}}
-
 						>
 							<Ionicons
 								name="trash-outline"
@@ -150,7 +170,7 @@ export default function CellById() {
 								color="#fff"
 							/>
 						</Pressable>
-
+						)}
 					</View>
 				)}
 				ListHeaderComponent={
@@ -158,11 +178,15 @@ export default function CellById() {
 						<Text className="text-2xl font-bold text-[#0b1c0c]">
 							Miembros ({cell.members.length})
 						</Text>
-						<Pressable className="bg-[#0b1c0c] p-3 rounded-lg w-16 items-center"
-							onPress={() => {
-								router.push(`cell/addedMemberToCell/${cell.id}`);
-							}}
+						{cellByIdData.cell.deletedAt === null && (
 
+						<Pressable
+							className="bg-[#0b1c0c] p-3 rounded-lg w-16 items-center"
+							onPress={() => {
+								router.push(
+									`cell/addedMemberToCell/${cell.id}`
+								);
+							}}
 						>
 							<Ionicons
 								name="person-add-outline"
@@ -170,6 +194,7 @@ export default function CellById() {
 								color="#fff"
 							/>
 						</Pressable>
+						)}
 					</View>
 				}
 			/>

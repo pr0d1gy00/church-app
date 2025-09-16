@@ -27,7 +27,7 @@ export default function EventCard({ event }: { event: Event }) {
     return (
         <TouchableOpacity
             onPress={() => router.push(`/event/${event.id}`)}
-            className="bg-gray-50 rounded-xl shadow-md shadow-gray-300/40 mb-4 overflow-hidden flex-row"
+            className="bg-gray-50 rounded-xl shadow-lg mb-4 overflow-hidden flex-row"
         >
             <View className="bg-green-600 p-4 w-20 justify-center items-center">
                 <Text className="text-white text-3xl font-bold">{day}</Text>

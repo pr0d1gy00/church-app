@@ -8,14 +8,21 @@ import React, {
 import { router, useSegments } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../interfaces/user.interfaces";
+import { ActivityIndicator, Text, View } from "react-native";
+import JWT, { SupportedAlgorithms } from 'expo-jwt';
 
 interface AuthContextData {
+	dataUserWithBiometrics: {
+		email: string;
+		token: string;
+	} | null;
 	user: User | null;
-	login: (userData: any) => Promise<void>;
+	login: (userData: User) => Promise<void>;
 	logout: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextData>({
+	dataUserWithBiometrics: null,
 	user: null,
 	login: async () => {},
 	logout: async () => {},
@@ -26,17 +33,16 @@ export function useAuthOfProvider() {
 }
 
 function useProtectedRoute(user: any, isLoading: boolean) {
-	const segments = useSegments();
-  console.log(segments)
+	const segments:string[] = useSegments();
+
 	useEffect(() => {
 		if (isLoading || segments[0]?.length === 0) {
 			return;
 		}
 
-		const inAuthGroup =
+		const inAuthGroup = segments.length === 0 ||
 			segments.includes("login") ||
 			segments.includes("registeruser");
-
 		if (!user && !inAuthGroup) {
 			router.replace("/login");
 		} else if (user && inAuthGroup) {
@@ -46,27 +52,63 @@ function useProtectedRoute(user: any, isLoading: boolean) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+
 	const [user, setUser] = useState<any>(null);
+	const [dataUserWithBiometrics, setDataUserWithBiometrics] = useState<{
+		email: string;
+		token: string;
+	} | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
-	useEffect(() => {
-		const loadUser = async () => {
-			try {
-				const storedUser = await AsyncStorage.getItem("user");
-				if (storedUser) {
-					setUser(JSON.parse(storedUser));
+	const loadUser = async () => {
+		try {
+			const storedUser = await AsyncStorage.getItem("user");
+			if (storedUser) {
+				try {
+					const parsed = JSON.parse(storedUser);
+					if (parsed) {
+						setDataUserWithBiometrics({
+							email: parsed.email,
+							token: parsed.token,
+						});
+					} else {
+						await AsyncStorage.removeItem("user");
+					}
+				} catch {
+					await AsyncStorage.removeItem("user");
 				}
-			} catch (e) {
-				console.error("Failed to load user from storage", e);
-			} finally {
-				setIsLoading(false);
 			}
-		};
+		} catch (e) {
+			console.error("Failed to load user from storage", e);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+	useEffect(() => {
 		loadUser();
 	}, []);
 	const login = async (userData: any) => {
-		setUser(userData);
-		await AsyncStorage.setItem("user", JSON.stringify(userData));
+		setUser(userData)
+		const passwordToken = JWT.encode({
+			email: userData.email,
+			password: userData.password
+		}, process.env.EXPO_PUBLIC_JWT_SECRET!);
+		await AsyncStorage.setItem("user", JSON.stringify({
+			...userData,
+			token: passwordToken
+		}));
+		const isFirstLoginStr = await AsyncStorage.getItem("isFirstLogin");
+		if (isFirstLoginStr === null) {
+			await AsyncStorage.setItem("isFirstLogin", "false");
+		}
+
+		await AsyncStorage.setItem(
+			"credentialsToLoginWithBiometrics",
+			JSON.stringify({
+				email: userData.email,
+				token: passwordToken,
+			})
+		);
 	};
 
 	const logout = async () => {
@@ -76,11 +118,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	useProtectedRoute(user, isLoading);
 
 	if (isLoading) {
-		return null;
+		return (
+			<View
+				style={{
+					flex: 1,
+					justifyContent: "center",
+					alignItems: "center",
+					backgroundColor: "#fff",
+				}}
+			>
+				<ActivityIndicator size="large" color="#333" />
+				<Text style={{ marginTop: 10, color: "#333" }}>
+					Restaurando sesión...
+				</Text>
+			</View>
+		);
 	}
 
 	return (
-		<AuthContext.Provider value={{ user, login, logout }}>
+		<AuthContext.Provider value={{ user, login, logout, dataUserWithBiometrics }}>
 			{children}
 		</AuthContext.Provider>
 	);

@@ -26,9 +26,8 @@ export default function UserCard({
 	return (
 		<TouchableOpacity
 			onPress={() => router.push(`editProfile/${user.id}`)}
-			className="p-4 rounded-xl shadow-sm mb-4"
+			className="p-4 rounded-xl shadow-lg elevation-md mb-4 bg-white"
 		>
-			{/* ... (Sección superior del usuario sin cambios) ... */}
 			<View className="flex-row items-center">
 				<View className="w-12 h-12 rounded-full justify-center items-center">
 					<Ionicons name="person" size={24} color="#73937e" />

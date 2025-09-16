@@ -17,7 +17,7 @@ interface Props {
 	handleMenuOption: (path: string) => void;
 }
 
-export default function headerWithTitleAndActions({
+export default function HeaderWithTitleAndActions({
 	title,
 	setShowMenu,
 	showMenu,

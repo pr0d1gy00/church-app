@@ -4,6 +4,7 @@ import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
 import useGetAllUser from "./useGetAllUser";
 import { registerForPushNotificationsAsync } from "./useNotification";
+import { showConfirmationAlert } from "../helpers/alert";
 
 interface DataUserRegister {
 	name: string;
@@ -11,6 +12,7 @@ interface DataUserRegister {
 	password: string;
 	confirmPassword: string;
 	role?: string;
+	deletedAt?: string | null;
 }
 
 export default function useUser() {
@@ -22,8 +24,41 @@ export default function useUser() {
 			password: "",
 			confirmPassword: "",
 			role: "",
+			deletedAt: null,
 		});
 	const { id } = useLocalSearchParams();
+	console.log(dataUserRegister.deletedAt)
+	const confirmDeleteUser = () => {
+		showConfirmationAlert({
+			title: "Confirmar eliminación",
+			message: "¿Estás seguro de que deseas eliminar este usuario?",
+			onConfirm: () => handleDeleteUser(Number(id)),
+		});
+	}
+		const handleDeleteUser = async (id:number)=>{
+				try {
+					const response = await axios.delete(`${process.env.EXPO_PUBLIC_API_URL}/church/users/deleteUserbyId`,{
+						params: { id },
+					});
+					Alert.alert(response.data.message || "Usuario eliminado con éxito");
+					router.back();
+				} catch (error) {
+					if (axios.isAxiosError(error)) {
+						Alert.alert(
+							error.response?.data?.message || "Error",
+							"No se pudo eliminar el usuario"
+						);
+					}
+				}
+			}
+	const confirmActivateUser = () => {
+		showConfirmationAlert({
+			title: "Confirmar Activación",
+			isDelete: false,
+			message: "¿Estás seguro de que deseas activar este usuario?",
+			onConfirm: () => handleActivateUser(Number(id)),
+		});
+	}
 
 	const handleChange = ({
 		name,
@@ -46,12 +81,14 @@ export default function useUser() {
 					params: { id },
 				}
 			);
+			console.log(response.data)
 			setDataUserRegister({
 				name: response.data.user.name,
 				email: response.data.user.email,
 				password: "",
 				confirmPassword: "",
 				role: response.data.user.role,
+				deletedAt: response.data.user.deletedAt,
 			});
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
@@ -64,6 +101,23 @@ export default function useUser() {
 			setLoading(false);
 		}
 	};
+
+	const handleActivateUser = async (id:number)=>{
+		try {
+			const response = await axios.put(`${process.env.EXPO_PUBLIC_API_URL}/church/users/activateUserbyId`,{},{
+				params: { id },
+			});
+			Alert.alert(response.data.message || "Usuario activado con éxito");
+			router.back();
+		} catch (error) {
+			if (axios.isAxiosError(error)) {
+				Alert.alert(
+					error.response?.data?.message || "Error",
+					"No se pudo activar el usuario"
+				);
+			}
+		}
+	}
 
 	const handleRemoveLeadership = (userId: number) => {
 		Alert.alert(
@@ -113,7 +167,11 @@ export default function useUser() {
 
 				return;
 			}
-
+			if(dataUserRegister.password.length < 5 || dataUserRegister.confirmPassword.length > 18){
+				Alert.alert("La contraseña debe tener entre 5 y 18 caracteres");
+				setLoading(false);
+				return;
+			}
 			if (
 				dataUserRegister.password !==
 				dataUserRegister.confirmPassword
@@ -153,10 +211,12 @@ export default function useUser() {
 					router.back();
 				}
 			} catch (error) {
-				Alert.alert(
-					"Error",
-					"No se pudo registrar el usuario"
-				);
+				if (axios.isAxiosError(error)) {
+					Alert.alert(
+						error.response?.data?.message || "Error",
+						"No se pudo registrar el usuario"
+					);
+				}
 			} finally {
 				setLoading(false);
 			}
@@ -242,6 +302,9 @@ export default function useUser() {
 		handleSubmit,
 		loading,
 		setDataUserRegister,
-		handleRemoveLeadership
+		handleRemoveLeadership,
+		confirmDeleteUser,
+		confirmActivateUser,
+
 	};
 }

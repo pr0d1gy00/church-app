@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import {
 	SafeAreaProvider,
 	SafeAreaView,
@@ -7,8 +7,8 @@ import { AuthProvider } from "../hooks/AuthContext";
 import messaging from "@react-native-firebase/messaging";
 import "../firebase";
 import * as Notifications from "expo-notifications";
-import { useEffect } from "react";
-import "../global.css"
+import { useEffect, useState } from "react";
+import "../global.css";
 
 Notifications.setNotificationHandler({
 	async handleNotification(notification) {
@@ -22,12 +22,13 @@ Notifications.setNotificationHandler({
 	},
 });
 export default function Layout() {
+
+
 	useEffect(() => {
 		const unsubscribe = messaging().onMessage(
 			async (remoteMessage) => {
 				if (remoteMessage.notification) {
 					await Notifications.scheduleNotificationAsync({
-
 						content: {
 							title: remoteMessage.notification.title,
 							body: remoteMessage.notification.body,
@@ -41,6 +42,7 @@ export default function Layout() {
 
 		return unsubscribe;
 	}, []);
+
 	return (
 		<AuthProvider>
 			<SafeAreaProvider>

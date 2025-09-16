@@ -97,8 +97,8 @@ export default function EventDetailScreen() {
 					<Text className="text-3xl font-bold text-white">
 						{eventDataById.event.title}
 					</Text>
-					{user?.role === "LEADER" ||
-						(user?.role === "ADMIN" && (
+					{(user?.role === "LEADER" ||
+					user?.role === "ADMIN") && (
 							<Pressable
 								className="bg-[#0b1c0c] p-4 rounded-lg "
 								onPress={() => {
@@ -111,7 +111,7 @@ export default function EventDetailScreen() {
 									color="#fff"
 								/>
 							</Pressable>
-						))}
+						)}
 				</View>
 
 				<View className="p-6">
@@ -143,6 +143,8 @@ export default function EventDetailScreen() {
 						/>
 					</View>
 				</View>
+				{(user?.role === "LEADER" ||
+					user?.role === "ADMIN")&& (
 				<Pressable
 					className="bg-red-600  p-4 rounded-lg w-[90%] mx-auto items-center mb-6"
 					onPress={() => {
@@ -151,8 +153,9 @@ export default function EventDetailScreen() {
 				>
 					<Text className="text-white text-lg">Eliminar evento</Text>
 				</Pressable>
-				{user?.role === "LEADER" ||
-					(user?.role === "ADMIN" && (
+				)}
+				{(user?.role === "LEADER" ||
+					user?.role === "ADMIN") && (
 						<View>
 							<View className="flex-1 flex flex-row items-center justify-between px-6 w-full">
 								<Text className="text-center text-lg text-gray-500">
@@ -227,7 +230,7 @@ export default function EventDetailScreen() {
 								</>
 							)}
 						</View>
-					))}
+					)}
 			</ScrollView>
 		</>
 	);

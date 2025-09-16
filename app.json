@@ -1,61 +1,65 @@
 {
-	"expo": {
-		"name": "church",
-		"slug": "church",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/iconChurch.png",
-		"userInterfaceStyle": "light",
-		"newArchEnabled": true,
-    "packagerOpts":{
+  "expo": {
+    "name": "daniela",
+    "slug": "church",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/notifications.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "packagerOpts": {
       "dev": false
     },
-		"splash": {
-			"image": "./assets/iconChurch.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/iconChurch.png",
-				"backgroundColor": "#ffffff"
-			},
-			"edgeToEdgeEnabled": true,
-			"package": "com.prodigy03.church",
-			"googleServicesFile": "./google-services.json"
-		},
-		"web": {
-			"favicon": "./assets/favicon.png",
-			"bundler": "metro"
-		},
-		"scheme": "church",
-		"plugins": [
-			"expo-router",
-			"@react-native-firebase/app",
-			"@react-native-firebase/messaging"
-		],
-
-		"extra": {
-			"router": {},
-			"eas": {
-				"projectId": "bb980a1c-b388-43cc-8063-0837e8493ac2"
-			},
-			"apiKey": "AIzaSyCx_tcdGjeJrsVVba6eVTnhDqT-Py58M94",
-
-			"authDomain": "church-6a68a.firebaseapp.com",
-
-			"projectId": "church-6a68a",
-
-			"storageBucket": "church-6a68a.firebasestorage.app",
-
-			"messagingSenderId": "186911403948",
-
-			"appId": "1:186911403948:web:0e9a1a5ffc449d08d21409",
-
-			"measurementId": "G-QSYKZ6FG5N"
-		}
+    "notifications": {
+      "icon": "./assets/iconNotifications.png",
+      "color": "#ffffff"
+    },
+    "splash": {
+      "image": "./assets/iconChurch.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/iconChurch.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.prodigy03.church",
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "scheme": "church",
+    "plugins": [
+      "expo-router",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notifications.png"
+        }
+      ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "bb980a1c-b388-43cc-8063-0837e8493ac2"
+      },
+      "apiKey": "AIzaSyCx_tcdGjeJrsVVba6eVTnhDqT-Py58M94",
+      "authDomain": "church-6a68a.firebaseapp.com",
+      "projectId": "church-6a68a",
+      "storageBucket": "church-6a68a.firebasestorage.app",
+      "messagingSenderId": "186911403948",
+      "appId": "1:186911403948:web:0e9a1a5ffc449d08d21409",
+      "measurementId": "G-QSYKZ6FG5N"
+    },
+    "owner": "prodigy03"
   }
 }

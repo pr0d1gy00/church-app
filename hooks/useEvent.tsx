@@ -154,7 +154,13 @@ export default function useEvent() {
 			);
 			return;
 		}
-
+		if(!eventData.location || eventData.description===""){
+			Alert.alert(
+				"Error",
+				"La ubicación y la descripción son obligatorias."
+			);
+			return;
+		}
 		setLoading(true);
 		try {
 			const dataToSend: EventData = {
