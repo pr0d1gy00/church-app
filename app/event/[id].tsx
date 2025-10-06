@@ -67,7 +67,7 @@ export default function EventDetailScreen() {
 			)
 		: "";
 
-	if (loading && !eventDataById) {
+	if (loading || !eventDataById) {
 		return (
 			<View className="flex-1 justify-center items-center bg-gray-50">
 				<ActivityIndicator size="large" color="#16a34a" />
@@ -75,20 +75,7 @@ export default function EventDetailScreen() {
 		);
 	}
 
-	if (!eventDataById) {
-		return (
-			<View className="flex-1 justify-center items-center bg-gray-50 p-8">
-				<Ionicons
-					name="alert-circle-outline"
-					size={60}
-					color="#d1d5db"
-				/>
-				<Text className="text-center text-gray-500 mt-4 text-lg">
-					No se pudo cargar la información del evento.
-				</Text>
-			</View>
-		);
-	}
+
 	return (
 		<>
 			<ScrollView className="flex-1 bg-white">
@@ -102,7 +89,6 @@ export default function EventDetailScreen() {
 							<Pressable
 								className="bg-[#0b1c0c] p-4 rounded-lg "
 								onPress={() => {
-									console.log("ola");
 								}}
 							>
 								<Ionicons

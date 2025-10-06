@@ -20,7 +20,6 @@ export default function users() {
 	const handleUserPress = () => {};
 	const [showMenu, setShowMenu] = React.useState(false);
 
-	console.log(allUsers)
 	// Estado de carga
 	if (loading) {
 		return (
@@ -47,7 +46,6 @@ export default function users() {
 				]}
 				handleMenuOption={(path:string) => {
 					setShowMenu(false);
-					console.log(path)
 					router.push(path);
 				}}
 				showSearch={true}

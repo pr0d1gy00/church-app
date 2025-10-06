@@ -25,7 +25,6 @@ export default function editProfile() {
 	const { user } = useAuthOfProvider();
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	console.log(user)
 	if (loading) {
 		return (
 			<ActivityIndicator
@@ -97,7 +96,7 @@ export default function editProfile() {
 							/>
 							<TextInput
 								value={dataUserRegister.name}
-								style={styles.input}
+								style={styles.input }
 								placeholder="Ingresa tu nombre completo"
 								placeholderTextColor="#9ca3af"
 								onChangeText={(e) =>
@@ -225,12 +224,13 @@ export default function editProfile() {
 					)}
 				</View>
 				{user?.deletedAt === null && (
-				<TouchableOpacity
+				<Pressable
+					disabled={loading}
 					style={styles.button}
 					onPress={() => handleSubmit()}
 				>
 					<Text style={styles.buttonText}>Actualizar</Text>
-				</TouchableOpacity>
+				</Pressable>
 				)}
 			</ScrollView>
 		</KeyboardAvoidingView>
@@ -290,8 +290,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		backgroundColor: "#ebebeb",
 		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: "#73937e",
 		paddingHorizontal: 10,
 		height: 48,
 	},
@@ -302,6 +300,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		fontSize: 16,
 		color: "#111827",
+	},
+	inputFocus: {
+		borderColor: "#73937e",
+		borderWidth: 1,
 	},
 	pickerContainer: {
 		backgroundColor: "#ebebeb",

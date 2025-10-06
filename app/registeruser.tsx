@@ -9,6 +9,8 @@ import {
 	KeyboardAvoidingView,
 	StyleSheet,
 	Platform,
+	Pressable,
+	ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import useUser from "../hooks/useUser";
@@ -19,13 +21,33 @@ export default function Hola() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+		if (loading) {
+				return (
+					<View
+						style={{
+							flex: 1,
+							justifyContent: "center",
+							alignItems: "center",
+							backgroundColor: "#fff",
+							opacity: 0.1,
+						}}
+					>
+						<ActivityIndicator size="large" color="#1e1e1e" />
+						<Text style={{ marginTop: 10, color: "#333",fontSize:24 }}>
+							Cargando...
+						</Text>
+					</View>
+				);
+			}
+
 	return (
 		<KeyboardAvoidingView
-			style={{ flex: 1, backgroundColor: "#f9fafb" }}
-			behavior={Platform.OS === "ios" ? "padding" : undefined}
+		  style={{ flex: 1 }}
+		  behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
 			<ScrollView
 				contentContainerStyle={styles.scrollContent}
+				keyboardShouldPersistTaps="handled"
 			>
 				<View style={styles.logoContainer}>
 					<Image
@@ -114,14 +136,15 @@ export default function Hola() {
 						</View>
 					</View>
 				</View>
-				<TouchableOpacity
+				<Pressable
+					disabled={loading}
 					style={styles.button}
 					onPress={() => handleSubmit()}
 				>
 					<Text style={styles.buttonText}>
 						{loading ? "Registrando..." : "Registrarse"}
 					</Text>
-				</TouchableOpacity>
+				</Pressable>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);

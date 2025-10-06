@@ -6,6 +6,7 @@ import {
 	View,
 	TouchableOpacity,
 	Pressable,
+	ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -40,7 +41,7 @@ const DetailRow = ({
 );
 
 export default function CellById() {
-	const { cellByIdData, confirmAndDeleteUserFromCell, confirmAndDeleteCell, confirmAndActivateCell} =
+	const { cellByIdData, confirmAndDeleteUserFromCell, confirmAndDeleteCell, confirmAndActivateCell,loading} =
 		useCell();
 
 	if (!cellByIdData) {
@@ -51,6 +52,24 @@ export default function CellById() {
 	const leaderName = cell.members.find(
 		(member) => member.userId === cell.leaderId
 	)?.user.name;
+	if (loading) {
+			return (
+				<View
+					style={{
+						flex: 1,
+						justifyContent: "center",
+						alignItems: "center",
+						backgroundColor: "#fff",
+						opacity: 0.1,
+					}}
+				>
+					<ActivityIndicator size="large" color="#1e1e1e" />
+							<Text style={{ marginTop: 10, color: "#333",fontSize:24 }}>
+						Cargando...
+					</Text>
+				</View>
+			);
+		}
 
 	return (
 		<View className="flex-1 bg-white">

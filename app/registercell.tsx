@@ -7,6 +7,7 @@ import {
 	View,
 	StyleSheet,
 	Platform,
+	ActivityIndicator,
 } from "react-native";
 import DateTimePicker, {
 	DateTimePickerEvent,
@@ -16,7 +17,7 @@ import useCell from "../hooks/useCell";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Registercell() {
-	const { cell, handleChange, allUsers, handleSubmit } = useCell();
+	const { cell, handleChange, allUsers, handleSubmit, loading } = useCell();
 	const [showTimePicker, setShowTimePicker] = useState(false);
 
 	const handleTimeChange = (
@@ -28,6 +29,19 @@ export default function Registercell() {
 			handleChange("meetingTime", selectedDate);
 		}
 	};
+		if (loading) {
+			return (
+				<ActivityIndicator
+					size="large"
+					color="#73937e"
+					style={{
+						flex: 1,
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				/>
+			);
+		}
 
 	return (
 		<ScrollView

@@ -6,6 +6,7 @@ import { CellApiResponseById, CellsApiResponse } from "../interfaces/cell.interf
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useAuthOfProvider } from "./AuthContext";
 import { showConfirmationAlert } from "../helpers/alert";
+import { set } from "date-fns";
 
 export default function useCell() {
 	const [cell, setCell] = useState({
@@ -20,6 +21,7 @@ export default function useCell() {
 	const [allCells, setAllCells] = useState<CellsApiResponse | null>(
 		null
 	);
+	const [loading, setLoading] = useState(false);
 	const [allUsers, setAllUsers] = useState<UsersApiResponse | null>(
 		null
 	);
@@ -78,6 +80,7 @@ export default function useCell() {
 		});
 	};
 	const handleGetCellById = async (id:number) => {
+		setLoading(true);
 		try {
 			const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/church/cells/getCellById`,{
 				params:{
@@ -94,13 +97,18 @@ export default function useCell() {
 					error.response?.data?.message || "Error",
 					"No se pudo obtener la células"
 				);
+		} finally {
+			setLoading(false);
 		}
 	}
 	const handeSubmitaddMemberToCell = async () => {
 		if (!selectedCellToSend || selectedUsers.length === 0) {
 			Alert.alert("Por favor, selecciona una célula y al menos un usuario");
 			return;
-		}			try {
+		}
+		setLoading(true);
+
+		try {
 			const response = await axios.post(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/addUserToCell`,
 				{
@@ -124,9 +132,13 @@ export default function useCell() {
 					error.response?.data?.message || "Error",
 					"No se pudo obtener los usuarios"
 				);
+		}finally {
+			setLoading(false);
 		}
 	}
 	const handleGetUsers = async () => {
+				setLoading(true);
+
 		try {
 			const response = await axios.get(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/users/getAllUsers`
@@ -138,6 +150,8 @@ export default function useCell() {
 					error.response?.data?.message || "Error",
 					"No se pudo obtener los usuarios"
 				);
+		} finally {
+			setLoading(false);
 		}
 	};
 	const handleSubmit = async () => {
@@ -167,6 +181,7 @@ export default function useCell() {
 			userId: user?.id as number,
 		};
 		if( !id ){
+			setLoading(true);
 		try {
 			const response = await axios.post(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/createCell`,
@@ -192,7 +207,11 @@ export default function useCell() {
 					error.response?.data?.message || "Error",
 					"No se pudo registrar la célula"
 				);
-		}}else{
+		}finally {
+			setLoading(false);
+		}
+	}else{
+			setLoading(true);
 			try {
 			const response = await axios.put(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/updateCell`,
@@ -223,11 +242,14 @@ export default function useCell() {
 				);
 
 
+		}finally {
+			setLoading(false);
 		}
 	}
 	};
 
 	const handleDeleteCell = async (id:number) => {
+			setLoading(true);
 		try {
 			const response = await axios.delete(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/deleteCell`,
@@ -248,11 +270,13 @@ export default function useCell() {
 					error.response?.data?.message || "Error",
 					"No se pudo eliminar la célula"
 				);
+		}finally {
+			setLoading(false);
 		}
 	};
 		const handleActivateCell = async (id:number) => {
+			setLoading(true);
 		try {
-			console.log(id)
 			const response = await axios.put(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/activateCell`,{},
 				{
@@ -273,9 +297,13 @@ export default function useCell() {
 					"No se pudo activada la célula"
 				);
 		}
+		finally {
+			setLoading(false);
+		}
 	};
 
 	const handleDeleteUserFromCell = async (idUser:number) => {
+			setLoading(true);
 		try {
 			const response = await axios.delete(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/removeUserFromCell`,
@@ -296,10 +324,13 @@ export default function useCell() {
 						error.response?.data?.message || "Error",
 						"No se pudo eliminar la célula"
 					);
+		}finally {
+			setLoading(false);
 		}
 	};
 
 	const handleGetCells = async () => {
+			setLoading(true);
 		try {
 			const response = await axios.get(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/getAllCells`
@@ -311,9 +342,13 @@ export default function useCell() {
 					error.response?.data?.message || "Error",
 					"No se pudo obtener las células"
 				);
+		}finally {
+
+			setLoading(false);
 		}
 	};
 	const handleGetCellsDeleted = async () => {
+			setLoading(true);
 		try {
 			const response = await axios.get(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/cells/getCellsDeleted`
@@ -325,6 +360,9 @@ export default function useCell() {
 					error.response?.data?.message || "Error",
 					"No se pudo obtener las células"
 				);
+		}
+		finally {
+			setLoading(false);
 		}
 	};
 	useFocusEffect(
@@ -368,6 +406,7 @@ export default function useCell() {
 		id,
 		confirmAndActivateCell,
 		stateToShow,
-		setStateToShow
+		setStateToShow,
+		loading,
 	};
 }

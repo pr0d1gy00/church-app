@@ -8,28 +8,37 @@ import {
 	ScrollView,
 	KeyboardAvoidingView,
 	ActivityIndicator,
+	Platform,
 } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
 import { Link, router } from "expo-router";
 import useAuth from "../hooks/useAuth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import { se } from "date-fns/locale";
 const imageLogin = require("../assets/LogoJuvenilAsset 24.png");
 
 export default function Login() {
-	const { user, handleChange, handleSubmit, setUser, loading } =
-		useAuth();
+	const {
+		user,
+		handleChange,
+		handleSubmit,
+		setUser,
+		loading,
+		handleLoginWithBiometrics,
+	} = useAuth();
 	const [checkingBiometric, setCheckingBiometric] = useState(false);
-	const [storedUser, setStoredUser] = useState<boolean | null>(null);
+	const [storedUser, setStoredUser] = useState<boolean | null>(
+		null
+	);
+
 	const fetchStoredUser = async () => {
 		const user = await AsyncStorage.getItem("isFirstLogin");
 		const isFirstLogin = user ? JSON.parse(user) : true;
-		console.log('isFirstLogin',isFirstLogin)
 		setStoredUser(isFirstLogin);
 	};
 
 	useEffect(() => {
-		console.log(AsyncStorage.getItem("isFirstLogin"));
 
 		fetchStoredUser();
 	}, []);
@@ -38,30 +47,30 @@ export default function Login() {
 		const storedUser = await AsyncStorage.getItem("isFirstLogin");
 		if (storedUser === null) {
 			router.replace("/login");
+			setCheckingBiometric(false);
+			return;
 		}
 		const credentials = await AsyncStorage.getItem(
 			"credentialsToLoginWithBiometrics"
 		);
 		const hasHardware =
 			await LocalAuthentication.hasHardwareAsync();
-		console.log("hasHardware:", hasHardware);
 		const isEnrolled =
 			await LocalAuthentication.isEnrolledAsync();
-		console.log("enrolled:", isEnrolled);
-		if (hasHardware && isEnrolled) {
+		if (hasHardware) {
 			const result =
 				await LocalAuthentication.authenticateAsync({
 					promptMessage: "Accede con tu huella",
 				});
 			if (result.success) {
 				setUser(JSON.parse(credentials!));
-				setTimeout(() => {
-					handleSubmit();
-				}, 500);
+				handleLoginWithBiometrics();
 			} else {
 				// Si falla, borra el usuario y manda al login
 				await AsyncStorage.removeItem("user");
 				router.replace("/login");
+				setCheckingBiometric(false);
+				return;
 			}
 		}
 		setCheckingBiometric(false);
@@ -97,7 +106,13 @@ export default function Login() {
 				}}
 			>
 				<ActivityIndicator size="large" color="#1e1e1e" />
-				<Text style={{ marginTop: 10, color: "#333" }}>
+				<Text
+					style={{
+						marginTop: 10,
+						color: "#333",
+						fontSize: 24,
+					}}
+				>
 					Cargando...
 				</Text>
 			</View>
@@ -105,7 +120,11 @@ export default function Login() {
 	}
 
 	return (
-		<KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+		<KeyboardAvoidingView
+			style={{ flex: 1 }}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+		>
+		
 			<ScrollView
 				className="w-full h-full"
 				contentContainerStyle={{
@@ -114,6 +133,7 @@ export default function Login() {
 					alignItems: "center",
 				}}
 				style={{ backgroundColor: "white" }}
+				keyboardShouldPersistTaps="handled"
 			>
 				<View className="items-center pt-24 flex-col w-full h-full ">
 					<View className="w-32 h-32 mb-6">
@@ -130,7 +150,6 @@ export default function Login() {
 							}}
 						/>
 					</View>
-					<Text></Text>
 					<Text className="text-5xl text-[#73937e] font-bold">
 						Iniciar Sesión
 					</Text>

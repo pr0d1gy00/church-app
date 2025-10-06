@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+	ActivityIndicator,
 	FlatList,
 	Pressable,
 	ScrollView,
@@ -12,7 +13,27 @@ import { Picker } from "@react-native-picker/picker";
 import { Checkbox } from "expo-checkbox";
 
 export default function AddedMemberToCell() {
-	const { allUsers, allCells,setSelectedCellToSend,selectedCellToSend, handleValueChange, selectedUsers, handeSubmitaddMemberToCell,id,cellByIdData } = useCell();
+	const { allUsers, allCells,setSelectedCellToSend,selectedCellToSend, handleValueChange, selectedUsers, handeSubmitaddMemberToCell,id,cellByIdData,loading } = useCell();
+
+	if (loading) {
+			return (
+				<View
+					style={{
+						flex: 1,
+						justifyContent: "center",
+						alignItems: "center",
+						backgroundColor: "#fff",
+						opacity: 0.1,
+					}}
+				>
+					<ActivityIndicator size="large" color="#1e1e1e" />
+							<Text style={{ marginTop: 10, color: "#333",fontSize:24 }}>
+						Cargando...
+					</Text>
+				</View>
+			);
+		}
+
 	return (
 			<View className="w-full items-center flex-1 px-2 bg-white">
 				<View className="w-[90%] py-4">

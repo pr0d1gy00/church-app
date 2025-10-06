@@ -87,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	useEffect(() => {
 		loadUser();
 	}, []);
+
 	const login = async (userData: any) => {
 		setUser(userData)
 		const passwordToken = JWT.encode({
@@ -109,6 +110,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				token: passwordToken,
 			})
 		);
+		const credentials = await AsyncStorage.getItem(
+			"credentialsToLoginWithBiometrics"
+		);
+		setDataUserWithBiometrics(credentials ? JSON.parse(credentials) : null);
 	};
 
 	const logout = async () => {

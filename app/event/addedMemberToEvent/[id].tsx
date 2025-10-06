@@ -1,14 +1,31 @@
 import { Picker } from '@react-native-picker/picker'
 import Checkbox from 'expo-checkbox'
 import React from 'react'
-import { FlatList, Pressable, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native'
 import useEvent from '../../../hooks/useEvent';
 import { Event } from '../../../interfaces/event.interfaces';
 
 export default function AddedMemberToEvent() {
 	const { allUsers,allEvents, id,selectedEventToSend,setSelectedEventToSend, eventDataById,selectedUsers, handleValueChange,handleSubmitAddMemberToEvent,
-	} = useEvent();
-
+	loading} = useEvent();
+if (loading) {
+		return (
+			<View
+				style={{
+					flex: 1,
+					justifyContent: "center",
+					alignItems: "center",
+					backgroundColor: "#fff",
+					opacity: 0.1,
+				}}
+			>
+				<ActivityIndicator size="large" color="#1e1e1e" />
+						<Text style={{ marginTop: 10, color: "#333",fontSize:24 }}>
+					Cargando...
+				</Text>
+			</View>
+		);
+	}
 	return (
 		<View className="w-full items-center flex-1 px-2 bg-white">
 				<View className="w-[90%] py-4">

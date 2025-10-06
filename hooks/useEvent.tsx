@@ -154,6 +154,13 @@ export default function useEvent() {
 			);
 			return;
 		}
+		if(eventData.eventDate < new Date()){
+			Alert.alert(
+				"Error",
+				"La fecha del evento no puede ser en el pasado."
+			);
+			return;
+		}
 		if(!eventData.location || eventData.description===""){
 			Alert.alert(
 				"Error",

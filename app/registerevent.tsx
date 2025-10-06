@@ -20,7 +20,6 @@ export default function RegisterEventScreen() {
     const { eventData, handleChange, handleSubmit, loading } = useEvent();
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
-	console.log(eventData)
     const onDateChange = (
         event: DateTimePickerEvent,
         selectedDate?: Date
@@ -48,6 +47,24 @@ export default function RegisterEventScreen() {
             handleChange("eventDate", newDateTime);
         }
     };
+    if (loading) {
+            return (
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "#fff",
+                        opacity: 0.1,
+                    }}
+                >
+                    <ActivityIndicator size="large" color="#1e1e1e" />
+                            <Text style={{ marginTop: 10, color: "#333",fontSize:24 }}>
+                        Cargando...
+                    </Text>
+                </View>
+            );
+        }
 
     return (
         <KeyboardAvoidingView
@@ -57,6 +74,7 @@ export default function RegisterEventScreen() {
             <ScrollView
                 className="flex-1 bg-white"
                 contentContainerStyle={{ paddingBottom: 40 }}
+                keyboardShouldPersistTaps="handled"
             >
                 <View className="px-6 py-8">
                     <Text className="text-3xl font-bold text-gray-800 mb-6 text-center">

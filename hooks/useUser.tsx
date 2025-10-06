@@ -5,6 +5,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import useGetAllUser from "./useGetAllUser";
 import { registerForPushNotificationsAsync } from "./useNotification";
 import { showConfirmationAlert } from "../helpers/alert";
+import { se } from "date-fns/locale";
 
 interface DataUserRegister {
 	name: string;
@@ -27,7 +28,6 @@ export default function useUser() {
 			deletedAt: null,
 		});
 	const { id } = useLocalSearchParams();
-	console.log(dataUserRegister.deletedAt)
 	const confirmDeleteUser = () => {
 		showConfirmationAlert({
 			title: "Confirmar eliminación",
@@ -36,6 +36,7 @@ export default function useUser() {
 		});
 	}
 		const handleDeleteUser = async (id:number)=>{
+			setLoading(true);
 				try {
 					const response = await axios.delete(`${process.env.EXPO_PUBLIC_API_URL}/church/users/deleteUserbyId`,{
 						params: { id },
@@ -49,6 +50,8 @@ export default function useUser() {
 							"No se pudo eliminar el usuario"
 						);
 					}
+				} finally {
+					setLoading(false);
 				}
 			}
 	const confirmActivateUser = () => {
@@ -81,7 +84,6 @@ export default function useUser() {
 					params: { id },
 				}
 			);
-			console.log(response.data)
 			setDataUserRegister({
 				name: response.data.user.name,
 				email: response.data.user.email,
@@ -103,6 +105,7 @@ export default function useUser() {
 	};
 
 	const handleActivateUser = async (id:number)=>{
+		setLoading(true);
 		try {
 			const response = await axios.put(`${process.env.EXPO_PUBLIC_API_URL}/church/users/activateUserbyId`,{},{
 				params: { id },
@@ -116,6 +119,8 @@ export default function useUser() {
 					"No se pudo activar el usuario"
 				);
 			}
+		} finally {
+			setLoading(false);
 		}
 	}
 
@@ -221,6 +226,7 @@ export default function useUser() {
 				setLoading(false);
 			}
 		} else {
+
 			const token = await registerForPushNotificationsAsync();
 
 			if (!dataUserRegister.name || !dataUserRegister.email) {
@@ -254,13 +260,9 @@ export default function useUser() {
 					: undefined,
 				role: dataUserRegister.role,
 			};
-			const device = {
-				deviceToken: token,
-				platform: Platform.OS,
-			};
+
 			const userData = {
 				user,
-				device,
 			};
 			try {
 				const response = await axios.put(

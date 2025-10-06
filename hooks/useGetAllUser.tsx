@@ -33,7 +33,6 @@ export default function useGetAllUser() {
 			const response = await axios.get(
 				`${process.env.EXPO_PUBLIC_API_URL}/church/users/getAllUsersDeleted`
 			);
-			console.log(response.data)
 			setAllUsers(response.data);
 		}
 		catch (error) {
